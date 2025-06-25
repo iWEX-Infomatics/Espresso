@@ -253,6 +253,6 @@ fixtures = [
     },
     {
         "dt": "Custom Field",
-        "filters": [["dt", "in", ["Sales Order","BOM","Purchase Order","Customer Worksheet"]]],  
+        "filters": [["dt", "in", ["Sales Order","BOM","Purchase Order","Customer Worksheet","PO Header"]]],  
     },
 ]
