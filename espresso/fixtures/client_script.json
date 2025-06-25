@@ -1,0 +1,13 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "User Feedback",
+  "enabled": 1,
+  "modified": "2025-06-25 10:56:45.950471",
+  "module": "espresso",
+  "name": "User Feedback",
+  "script": "frappe.ui.form.on('User Feedback', {\r\n    refresh(frm) {\r\n        calculate_age(frm);\r\n        setInterval(() => {\r\n            if (should_update_age(frm)) {\r\n                calculate_age(frm);\r\n            }\r\n        }, 60000); \r\n    },\r\n    time: calculate_age,\r\n    date: calculate_age,\r\n    status: calculate_age,\r\n    feedback_type: calculate_age\r\n});\r\n\r\nfunction should_update_age(frm) {\r\n    const status = frm.doc.status;\r\n    const feedbackType = frm.doc.feedback_type;\r\n\r\n    if (feedbackType === \"Rating Only\") return false;\r\n\r\n    return status === \"Open\" || status === \"In Progress\";\r\n}\r\n\r\nfunction calculate_age(frm) {\r\n    const feedbackType = frm.doc.feedback_type;\r\n\r\n    if (feedbackType === \"Rating Only\") {\r\n        frm.set_value(\"age\", \"⭐\");\r\n        return;\r\n    }\r\n\r\n    if (!should_update_age(frm)) return;\r\n\r\n    const date = frm.doc.date;\r\n    const time = frm.doc.time;\r\n\r\n    if (!date || !time) return;\r\n\r\n    const datetime_str = `${date} ${time}`;\r\n    const feedback_datetime = new Date(datetime_str);\r\n    const now = new Date();\r\n\r\n    const msDiff = now - feedback_datetime;\r\n    if (msDiff < 0) {\r\n        frm.set_value(\"age\", \"Future Time\");\r\n        return;\r\n    }\r\n\r\n    const minutes = msDiff / (1000 * 60);\r\n    const hours = msDiff / (1000 * 60 * 60);\r\n    const days = msDiff / (1000 * 60 * 60 * 24);\r\n    const weeks = days / 7;\r\n    const months = days / 30;\r\n    const years = days / 365;\r\n\r\n    let ageStr = \"\";\r\n\r\n    if (minutes < 60) {\r\n        ageStr = `${minutes.toFixed(1)} m`;\r\n    } else if (hours < 24) {\r\n        ageStr = `${hours.toFixed(1)} H`;\r\n    } else if (days < 7) {\r\n        ageStr = `${days.toFixed(1)} D`;\r\n    } else if (days < 30) {\r\n        ageStr = `${weeks.toFixed(1)} W`;\r\n    } else if (days < 365) {\r\n        ageStr = `${months.toFixed(1)} M`;\r\n    } else {\r\n        ageStr = `${years.toFixed(1)} Y`;\r\n    }\r\n\r\n    frm.set_value(\"age\", ageStr);\r\n}\r\n",
+  "view": "Form"
+ }
+]
